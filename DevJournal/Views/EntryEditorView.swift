@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 
 struct EntryEditorView: View {
@@ -44,8 +45,45 @@ struct EntryEditorView: View {
                     .lineSpacing(10)
                     .font(.system(size: 15))
             }
+            HStack {
+                Button(action: saveEntryToDatabase) {
+                    Label("Save Entry", systemImage: "square.and.arrow.down")
+                }
+                .foregroundStyle(Color.blue)
+                Button(action: exportEntryToFile) {
+                    Label("Export to file", systemImage: "square.and.arrow.up")
+                }
+                .foregroundStyle(Color.blue)
+            }
         }
         .formStyle(.grouped)
+    }
+    
+    private func saveEntryToDatabase() {
+        _ = JournalEntry(creationDate: Date(), title: title, content: entryBody)
+    }
+    
+    private func exportEntryToFile() {
+        let savePanel = NSSavePanel()
+        // .plaintext is a UTT and requires the import
+        savePanel.allowedContentTypes = [.plainText]
+        savePanel.isExtensionHidden = false
+        savePanel.nameFieldStringValue = "\(title).txt"
+        savePanel.message = "Save Journal Entry"
+        savePanel.showsTagField = true
+        savePanel.begin { result in
+            if result.rawValue == NSApplication.ModalResponse.abort.rawValue {
+                return
+            }
+            
+            guard let url = savePanel.url else { return }
+            
+            do {
+                try entryBody.write(to: url, atomically: true, encoding: .utf8)
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 
