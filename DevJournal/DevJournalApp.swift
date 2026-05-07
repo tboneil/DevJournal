@@ -39,5 +39,6 @@ struct DevJournalVersionedSchema: VersionedSchema {
 
     static var models: [any PersistentModel.Type] = [
         Item.self,
+        JournalEntry.self,
     ]
 }
