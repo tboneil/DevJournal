@@ -7,47 +7,58 @@
 
 import SwiftUI
 
+enum NavigationDestination: Hashable {
+    case entryEditor
+    case quickEntry
+    case listEntries
+    case exportView
+}
+
 struct MainView: View {
+    @State private var navigationPath = NavigationPath()
     var body: some View {
         
-        // TODO: Add in NavigationSplitMenu with links for some other abilities
-        
-        Grid(horizontalSpacing: 20, verticalSpacing: 20) {
-            GridRow {
-                CardButtonView(title: "Create New Entry", icon: "pencil", action: {})
-                    .padding()
-                CardButtonView(title: "Export", icon: "square.and.arrow.up", action: {})
-                    .padding()
+        NavigationStack(path: $navigationPath) {
+            Grid(horizontalSpacing: 20, verticalSpacing: 20) {
+                GridRow {
+                    CardButtonView(title: "Create New Entry", icon: "pencil", action: {})
+                        .padding()
+                    CardButtonView(title: "Export", icon: "square.and.arrow.up", action: {})
+                        .padding()
+                }
+                GridRow {
+                    // Place cards here
+                    CardButtonView(title: "Quick Entry", icon: "pencil", action: {})
+                        .padding()
+                    CardButtonView(title: "List Entries", icon: "list.dash", action: {})
+                        .padding()
+                }
             }
-            GridRow {
-                // Place cards here
-                CardButtonView(title: "Quick Entry", icon: "pencil", action: {})
-                    .padding()
-                CardButtonView(title: "List Entries", icon: "list.dash", action: {})
-                    .padding()
+            .navigationDestination(for: NavigationDestination.self) { destination in
+                switch destination {
+                case .entryEditor:
+                    EntryEditorView()
+                case .quickEntry:
+                    QuickEntryView()
+                case .listEntries:
+                    // TODO: Create list view
+                    MainView()
+                case .exportView:
+                    // TODO: Create export view function
+                    MainView()
+                        
+                }
             }
         }
         
     }
-}
-
-// TODO: Define functions that call views based on card selection
-
-private func callEntryEditorView() {
     
+    // TODO: Define functions that call views based on card selection
+    private func navigate(to destination: NavigationDestination) {
+        navigationPath.append(destination)
+    }
 }
 
-private func callQuickEntryView() {
-    
-}
-
-private func callListView() {
-    
-}
-
-private func callExportView() {
-    
-}
 
 #Preview {
     MainView()
