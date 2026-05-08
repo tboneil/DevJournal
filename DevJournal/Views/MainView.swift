@@ -21,16 +21,24 @@ struct MainView: View {
         NavigationStack(path: $navigationPath) {
             Grid(horizontalSpacing: 20, verticalSpacing: 20) {
                 GridRow {
-                    CardButtonView(title: "Create New Entry", icon: "pencil", action: {})
+                    CardButtonView(title: "Create New Entry", icon: "pencil") {
+                        navigate(to: .entryEditor)
+                    }
                         .padding()
-                    CardButtonView(title: "Export", icon: "square.and.arrow.up", action: {})
+                    CardButtonView(title: "Export", icon: "square.and.arrow.up") {
+                        navigate(to: .exportView)
+                    }
                         .padding()
                 }
                 GridRow {
                     // Place cards here
-                    CardButtonView(title: "Quick Entry", icon: "pencil", action: {})
+                    CardButtonView(title: "Quick Entry", icon: "pencil") {
+                        navigate(to: .quickEntry)
+                    }
                         .padding()
-                    CardButtonView(title: "List Entries", icon: "list.dash", action: {})
+                    CardButtonView(title: "List Entries", icon: "list.dash") {
+                        navigate(to: .listEntries)
+                    }
                         .padding()
                 }
             }
