@@ -12,9 +12,10 @@ import UniformTypeIdentifiers
 @main
 struct DevJournalApp: App {
     var body: some Scene {
-        DocumentGroup(editing: .itemDocument, migrationPlan: DevJournalMigrationPlan.self) {
-            ContentView()
+        WindowGroup {
+            MainView()
         }
+        .modelContainer(for: [JournalEntry.self])
     }
 }
 
@@ -23,6 +24,8 @@ extension UTType {
         UTType(importedAs: "com.example.item-document")
     }
 }
+
+
 
 struct DevJournalMigrationPlan: SchemaMigrationPlan {
     static var schemas: [VersionedSchema.Type] = [
@@ -38,6 +41,6 @@ struct DevJournalVersionedSchema: VersionedSchema {
     static var versionIdentifier = Schema.Version(1, 0, 0)
 
     static var models: [any PersistentModel.Type] = [
-        Item.self,
+        JournalEntry.self
     ]
 }

@@ -7,9 +7,11 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import SwiftData
 
 
 struct EntryEditorView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var title: String = ""
     @State private var entryBody: String = ""
     @FocusState private var isEditorFocused: Bool
@@ -60,7 +62,14 @@ struct EntryEditorView: View {
     }
     
     private func saveEntryToDatabase() {
-        _ = JournalEntry(creationDate: Date(), title: title, content: entryBody)
+        let newEntry = JournalEntry(creationDate: Date(), title: title, content: entryBody)
+        modelContext.insert(newEntry)
+        
+        // Clear the form after saving
+        title = ""
+        entryBody = ""
+        
+        print("✅ Entry saved to database")
     }
     
     private func exportEntryToFile() {
