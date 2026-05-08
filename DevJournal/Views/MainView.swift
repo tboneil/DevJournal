@@ -50,7 +50,7 @@ struct MainView: View {
                     QuickEntryView()
                 case .listEntries:
                     // TODO: Create list view
-                    MainView()
+                        ListEntryView()
                 case .exportView:
                     // TODO: Create export view function
                     MainView()
