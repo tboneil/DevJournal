@@ -20,28 +20,16 @@ struct ListEntryView: View {
     @Query(sort: \JournalEntry.creationDate, order: .reverse) private var entries: [JournalEntry]
     
     var body: some View {
-        // TODO: Define unique list view that uses branching
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(entries) { entry in
-                    HStack(alignment: .top) {
-                        Circle()
-                            .fill(Color.blue)
-                            .frame(width: 12, height: 12)
-                            .frame(width: 20)
-                        
-                        VStack(alignment: .leading) {
-                            Text(entry.creationDate, style: .date)
-                            Text(entry.title)
-                            Text(entry.content).lineLimit(2)
-                        }
-                    }
-                }
+        NavigationSplitView {
+            List(entries) { entry in
+                NavigationLink(entry.title, destination: EntryEditorView(entry: entry))
             }
+        } detail: {
+            
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
 
 #Preview {
     ListEntryView()

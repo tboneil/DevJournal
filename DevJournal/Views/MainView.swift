@@ -9,7 +9,6 @@ import SwiftUI
 
 enum NavigationDestination: Hashable {
     case entryEditor
-    case quickEntry
     case listEntries
     case exportView
 }
@@ -31,11 +30,6 @@ struct MainView: View {
                         .padding()
                 }
                 GridRow {
-                    // Place cards here
-                    CardButtonView(title: "Quick Entry", icon: "pencil") {
-                        navigate(to: .quickEntry)
-                    }
-                        .padding()
                     CardButtonView(title: "List Entries", icon: "list.dash") {
                         navigate(to: .listEntries)
                     }
@@ -45,11 +39,8 @@ struct MainView: View {
             .navigationDestination(for: NavigationDestination.self) { destination in
                 switch destination {
                 case .entryEditor:
-                    EntryEditorView()
-                case .quickEntry:
-                    QuickEntryView()
+                    EntryEditorView(entry: JournalEntry(creationDate: Date(), title: "", content: ""))
                 case .listEntries:
-                    // TODO: Create list view
                         ListEntryView()
                 case .exportView:
                     // TODO: Create export view function
