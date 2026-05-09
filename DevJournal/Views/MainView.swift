@@ -43,8 +43,7 @@ struct MainView: View {
                 case .listEntries:
                         ListEntryView()
                 case .exportView:
-                    // TODO: Create export view function
-                    MainView()
+                    ExportEntryToFileView(entriesToExport: nil)
                         
                 }
             }
