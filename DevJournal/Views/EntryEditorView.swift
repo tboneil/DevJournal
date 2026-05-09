@@ -12,8 +12,7 @@ import SwiftData
 
 struct EntryEditorView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var title: String = ""
-    @State private var entryBody: String = ""
+    @Bindable var entry: JournalEntry
     @FocusState private var isEditorFocused: Bool
     @FocusState private var isTitleFocused: Bool
     
@@ -23,7 +22,7 @@ struct EntryEditorView: View {
                 Text("New Journal Entry")
                     .font(.headline)
                 
-                TextField("Entry Title", text: $title)
+                TextField("Entry Title", text: $entry.title)
                     .textFieldStyle(.roundedBorder)
                     .frame(maxWidth: 500)
             }
@@ -33,7 +32,7 @@ struct EntryEditorView: View {
                 Text("Entry")
                     .font(.headline)
                 
-                TextEditor(text: $entryBody)
+                TextEditor(text: $entry.content)
                     .frame(maxWidth: 500, minHeight: 200)
                     .focused($isEditorFocused)
                     .padding(10)
@@ -48,10 +47,6 @@ struct EntryEditorView: View {
                     .font(.system(size: 15))
             }
             HStack {
-                Button(action: saveEntryToDatabase) {
-                    Label("Save Entry", systemImage: "square.and.arrow.down")
-                }
-                .foregroundStyle(Color.blue)
                 Button(action: exportEntryToFile) {
                     Label("Export to file", systemImage: "square.and.arrow.up")
                 }
@@ -61,34 +56,22 @@ struct EntryEditorView: View {
         .formStyle(.grouped)
     }
     
-    private func saveEntryToDatabase() {
-        let newEntry = JournalEntry(creationDate: Date(), title: title, content: entryBody)
-        modelContext.insert(newEntry)
-        
-        // Clear the form after saving
-        title = ""
-        entryBody = ""
-        
-        print("✅ Entry saved to database")
-    }
+    
     
     private func exportEntryToFile() {
         let savePanel = NSSavePanel()
-        // .plaintext is a UTT and requires the import
         savePanel.allowedContentTypes = [.plainText]
         savePanel.isExtensionHidden = false
-        savePanel.nameFieldStringValue = "\(title).txt"
+        savePanel.nameFieldStringValue = "\(entry.title).txt"
         savePanel.message = "Save Journal Entry"
         savePanel.showsTagField = true
         savePanel.begin { result in
-            if result.rawValue == NSApplication.ModalResponse.abort.rawValue {
-                return
-            }
-            
-            guard let url = savePanel.url else { return }
+            guard result == .OK, let url = savePanel.url else { return }
             
             do {
-                try entryBody.write(to: url, atomically: true, encoding: .utf8)
+                try entry.content.write(to: url, atomically: true, encoding: .utf8)
+                //   ↑
+                // Use entry.content (the String), not $entry
             } catch {
                 print(error)
             }
@@ -97,5 +80,17 @@ struct EntryEditorView: View {
 }
 
 #Preview {
-    EntryEditorView()
+    // Create a sample entry for preview
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: JournalEntry.self, configurations: config)
+    
+    let sampleEntry = JournalEntry(
+        creationDate: Date(),
+        title: "Sample Entry",
+        content: "This is sample content for the preview."
+    )
+    container.mainContext.insert(sampleEntry)
+    
+    return EntryEditorView(entry: sampleEntry)
+        .modelContainer(container)
 }
