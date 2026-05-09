@@ -18,15 +18,52 @@ struct MonthGroup: Identifiable {
 struct ListEntryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \JournalEntry.creationDate, order: .reverse) private var entries: [JournalEntry]
+    @State private var selectedEntry: JournalEntry?
     
     var body: some View {
         NavigationSplitView {
-            List(entries) { entry in
-                NavigationLink(entry.title, destination: EntryEditorView(entry: entry))
+            List(entries, selection: $selectedEntry) { entry in
+                NavigationLink(value: entry) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(entry.title)
+                            .font(.headline)
+                        
+                        Text(entry.creationDate, format: .dateTime.month().day().year())
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .navigationTitle("Journal Entries")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: addNewEntry) {
+                        Label("New Entry", systemImage: "plus")
+                    }
+                }
             }
         } detail: {
-            
+            if let selectedEntry {
+                EntryEditorView(existingEntry: selectedEntry)
+            } else {
+                ContentUnavailableView(
+                    "No Entry Selected",
+                    systemImage: "book.closed",
+                    description: Text("Select a journal entry from the list to view and edit it")
+                )
+            }
         }
+    }
+    
+    private func addNewEntry() {
+        let newEntry = JournalEntry(
+            creationDate: Date(),
+            title: "New Entry",
+            content: ""
+        )
+        modelContext.insert(newEntry)
+        selectedEntry = newEntry
     }
 }
 

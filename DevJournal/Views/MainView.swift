@@ -39,7 +39,7 @@ struct MainView: View {
             .navigationDestination(for: NavigationDestination.self) { destination in
                 switch destination {
                 case .entryEditor:
-                    EntryEditorView(entry: JournalEntry(creationDate: Date(), title: "", content: ""))
+                    EntryEditorView()
                 case .listEntries:
                         ListEntryView()
                 case .exportView:
