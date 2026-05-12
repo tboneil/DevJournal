@@ -46,8 +46,19 @@ struct EntryView: View {
                     .lineSpacing(10)
                     .font(.system(size: 16, weight: .regular, design: .default))
             }
+            
+            HStack {
+                Button("Save Entry", systemImage: "square.and.arrow.down", action: saveEntry)
+            }
         }
         .formStyle(.grouped)
+    }
+    
+//    Functions
+//    TODO: Build out SaveEntry function, put export function in view to keep it localized to the view
+    
+    private func saveEntry() {
+        
     }
 }
 
